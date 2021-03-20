@@ -8,12 +8,7 @@ gryo_X = 0.0; gryo_Y = 0.0; gryo_Z = 0.1;
 % define the 3-axis accelerometer sensor data
 acc_X = 5.0; acc_Y = 0.0; acc_Z = -8.4285; G=-9.8;
 % define the 3-axis magnetic sensor data
-magn_X = 4.0; magn_Y = 0.0; magn_Z = 0.0;
-% 以下步骤计算磁场平行与地面的分量，该分量与重力方向垂直，可作为解算横摆角的依据
-accVector = [acc_X; acc_Y; acc_Z];
-magnVector = [magn_X; magn_Y; magn_Z];
-magnVector = magnVector - dot(accVector,magnVector)*accVector/norm(accVector)/norm(accVector);
-magn_X = magnVector(1); magn_Y = magnVector(2); magn_Z = magnVector(3); B = norm(magnVector);
+magn_X = 0.0; magn_Y = 4.0; magn_Z = 0; B = 4.0;
 %%
 % simulate the orientation angles with reference to the EAST-NORTH-SKY coordinate
 % get the initial orientation from the accelerometer & magnetic sensor
@@ -38,9 +33,9 @@ pause(3);
 delte_t = 0.001; 
 OmegaVector = [gryo_X; gryo_Y; gryo_Z];
 for t = 0:delte_t:15.7
-    OmegaVectorInWorld = R_new*OmegaVector;
-    % fprintf("%f %f %f \n",OmegaVectorInWorld(1),OmegaVectorInWorld(2),OmegaVectorInWorld(3));
-    OmegaMatrix = [0 -OmegaVectorInWorld(3) OmegaVectorInWorld(2); OmegaVectorInWorld(3) 0 -OmegaVectorInWorld(1); -OmegaVectorInWorld(2) OmegaVectorInWorld(1) 0];
+    OmegaVectorIn = R_new*OmegaVector;
+    fprintf("%f %f %f \n",OmegaVector(1),OmegaVector(2),OmegaVector(3));
+    OmegaMatrix = [0 -OmegaVector(3) OmegaVector(2); OmegaVector(3) 0 -OmegaVector(1); -OmegaVector(2) OmegaVector(1) 0];
     R_new = (eye(3)+OmegaMatrix*delte_t)*R_new;
     if mod(t,delte_t*500) == 0 
         hold on;
